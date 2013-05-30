@@ -74,3 +74,9 @@ The app use some javascript lib for upload files
 #. Bootstrap
 #. plupload
 #. Underscore
+
+
+Sponsor
+=======
+
+Sponsored by www.xperiment.mobi
