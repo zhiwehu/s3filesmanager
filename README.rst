@@ -24,8 +24,22 @@ Dependency
 #. django-storages
 
 
+INSTALLED_APPS
+==============
+::
+
+    INSTALLED_APPS = (
+        ...
+        'south',
+        'bootstrap_toolkit',
+        'sorl.thumbnail',
+        's3filesmanager',
+    )
+
+
 Settings
 ===================
+::
 
     AWS_ACCESS_KEY_ID = 'YOUR_AWS_ACCESS_KEY_ID'
     AWS_SECRET_ACCESS_KEY = 'YOUR_AWS_SECRET_ACCESS_KEY'
@@ -37,8 +51,10 @@ Settings
     AWS_S3_SECURE_URLS = False
     AWS_QUERYSTRING_AUTH = False
 
+
 urls.py
 =======
+::
 
     url(r'^', include('s3filesmanager.urls')),
 
