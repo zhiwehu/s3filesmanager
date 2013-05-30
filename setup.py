@@ -11,6 +11,7 @@ setup(
     url='https://github.com/zhiwehu/s3filesmanager',
     install_requires=['django >= 1.5',
                       'South >= 0.7.6',
+                      'django-model-utils >= 1.1.0',
                       'django-bootstrap-toolkit',
                       'PIL >= 1.1.7',
                       'sorl-thumbnail >= 11.12',
