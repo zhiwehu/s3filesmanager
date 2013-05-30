@@ -58,4 +58,13 @@ urls.py
 
     url(r'^', include('s3filesmanager.urls')),
 
-.. _contributors: https://github.com/zhiwehu/s3filesmanager/blob/master/CONTRIBUTORS.txt
+
+Javascript
+==========
+
+The app use some javascript lib for upload files
+
+#. jQuery
+#. Bootstrap
+#. plupload
+#. Underscore
