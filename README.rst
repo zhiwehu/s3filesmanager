@@ -12,6 +12,12 @@ To use this app follow these steps:
 #. Install additional dependencies
 #. syncdb and migrate (if you use South)
 
+Install
+=======
+::
+
+    -e git+https://github.com/zhiwehu/s3filesmanager.git#egg=s3filesmanager
+
 
 Dependency
 ==========
