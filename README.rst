@@ -16,7 +16,7 @@ Install
 =======
 ::
 
-    -e git+https://github.com/zhiwehu/s3filesmanager.git#egg=s3filesmanager
+    pip install s3filesmanager
 
 
 Dependency
@@ -74,3 +74,9 @@ The app use some javascript lib for upload files
 #. Bootstrap
 #. plupload
 #. Underscore
+
+
+Sponsor
+=======
+
+Sponsored by www.xperiment.mobi
