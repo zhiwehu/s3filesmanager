@@ -25,3 +25,5 @@ build
 
 # Virtualenv
 env/*
+
+.DS_Store
