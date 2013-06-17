@@ -28,10 +28,10 @@ def get_page(request, items, count_per_page):
 
 
 @login_required
-def file_list(request, template='s3filesmanager/index.html', extra_context=None):
-    file_list = get_page(request, S3File.objects.filter(owner=request.user).order_by('-created'), 10)
+def file_list(request, template='s3filemanage/index.html', extra_context=None):
+    paginator = get_page(request, S3File.objects.filter(owner=request.user).order_by('-created'), 10)
     context = {
-        'file_list': file_list,
+        'paginator': paginator,
     }
     if extra_context:
         context.update(extra_context)

@@ -1,4 +1,4 @@
-{% extends "s3filesmanager/base.html" %}
+{% extends "s3filemanage/base.html" %}
 
 {% load i18n bootstrap_toolkit %}
 
@@ -8,7 +8,7 @@
     <div class="page-header">
         <h1>
             {% trans "Files" %}
-            <small>{% trans "Total" %}: <span id="total_file_count">{{ file_list.count }}</span></small>
+            <small>{% trans "Total" %}: <span id="total_file_count">{{ paginator.count }}</span></small>
         </h1>
 
         <a id="add_files" class="btn btn-success">
@@ -38,62 +38,61 @@
 
     <form id="delete_files_form" method="POST" action="{% url "delete_files" %}">
         {% csrf_token %}
-        <div id="file_list_div">
-            {% for file in file_list.object_list %}
-                <div class="row-fluid">
-                    <div class="span1">
-                        <input name="file_id" type="checkbox" value="{{ file.id }}">
-                    </div>
-                    <div class="span2">
-                        <a href="{{ file.s3_file.url }}" title="{{ file.file_name }}" target="_blank">
+        <ul class="thumbnails" id="file_list">
+            {% for file in paginator.object_list %}
+                <li class="span3">
+                    <div class="thumbnail">
+                        <a href="{{ file.s3_file.url }}" data-toggle="tooltip" title="{{ file.file_name }}"
+                           target="_blank">
                             {% if file.thumbnail_url %}
-                                <img class="img-polaroid" src="{{ file.thumbnail_url }}">
+                                <img src="{{ file.thumbnail_url }}">
                             {% else %}
-                                <img class="img-polaroid" src="{{ STATIC_URL }}img/80x80.png">
+                                <img src="{{ STATIC_URL }}img/80x80.png">
                             {% endif %}
                         </a>
-                    </div>
-                    <div class="span4">
-                        {{ file.file_name }}
-                    </div>
-                    <div class="span3">
-                        {{ file.file_size|filesizeformat }}
-                    </div>
-                    <div class="span2">
-                        {{ file.created|date:"Y-m-d H:i:s" }}
-                    </div>
-                </div>
-            {% endfor %}
 
+                        <div class="caption">
+                            <input name="file_id" type="checkbox" value="{{ file.id }}">
+
+                            <p><i class="icon-file"></i> {{ file.file_name }}</p>
+
+                            <p><i class="icon-info-sign"></i> {{ file.file_size|filesizeformat }}</p>
+
+                            <p><i class="icon-time"></i> {{ file.created|date:"Y-m-d H:i:s" }}</p>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if paginator.num_pages > 1 %}
             <div class="pull-right">
-                {% bootstrap_pagination file_list.object_list %}
-            </div>
-        </div>
+                    {% trans "Per page" %}: {{ paginator.per_page }}
+                    {% bootstrap_pagination paginator.object_list %}
+                </div>
+        {% endif %}
     </form>
 {% endblock %}
 
 {% block extra_js %}
     <script src="{{ STATIC_URL }}js/underscore.js"></script>
     <script type="text/template" id="tpl_file">
-        <div class="row-fluid">
-            <div class="span1">
-                <input name="file_id" type="checkbox" value="<%= file_id %>">
-            </div>
-            <div class="span2">
-                <a href="<%= s3_file_url %>" rel="lightbox" title="<%= file_name %>">
-                    <img class="img-polaroid" src="<%= thumbnail_url %>">
+        <li class="span3">
+            <div class="thumbnail">
+                <a href="<%= s3_file_url %>" data-toggle="tooltip" title="<%= file_name %>" target="_blank">
+                    <img src="<%= thumbnail_url %>">
                 </a>
+
+                <div class="caption">
+                    <input name="file_id" type="checkbox" value="<%= file_id %>">
+
+                    <p><i class="icon-file"></i> <%= file_name %></p>
+
+                    <p><i class="icon-info-sign"></i> <%= file_size %></p>
+
+                    <p><i class="icon-time"></i> <%= created %></p>
+                </div>
             </div>
-            <div class="span4">
-                <%= file_name %>
-            </div>
-            <div class="span3">
-                <%= file_size %>
-            </div>
-            <div class="span2">
-                <%= created %>
-            </div>
-        </div>
+        </li>
     </script>
     <!-- load jquery.cookie.js for csrf_token upload -->
     <script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
@@ -102,7 +101,7 @@
 
     <script type="text/javascript">
         $(function () {
-            var total_file_count = {{ file_list.count }};
+            var total_file_count = {{ paginator.count }};
             var last_size = 0;
 
             var uploader = new plupload.Uploader({
@@ -140,7 +139,7 @@
                 $("#file_upload_progress").find("div.bar").attr("style", "width: " + p + "%;");
                 var obj = $.parseJSON(response.response);
                 var file_html = _.template($("#tpl_file").html(), obj);
-                $("div#file_list_div").prepend(file_html);
+                $("#file_list").prepend(file_html);
                 total_file_count = total_file_count + 1;
                 $("#total_file_count").html(total_file_count);
             });
@@ -163,6 +162,10 @@
                 if (confirm("Are you sure to delete all selected files?")) {
                     $("#delete_files_form").submit();
                 }
+            });
+
+            $(".thumbnail").tooltip({
+                selector: "a[data-toggle=tooltip]"
             });
 
         });
