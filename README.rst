@@ -65,6 +65,23 @@ urls.py
     url(r'^', include('s3filesmanager.urls')),
 
 
+template tags
+=============
+::
+
+    {% load s3filesmanager_tags %}
+
+    <!-- Put the s3filesmanager tag in a div which you want to show the files manager -->
+    <div>
+        {% s3filesmanager %}
+    </div>
+
+    <!-- Put the s3filesmanager_js tag in html head, but need to load jquery and bootstrap at first -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    {% s3filesmanager_js %}
+
+
 Javascript
 ==========
 
