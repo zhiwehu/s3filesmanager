@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='s3filesmanager',
-    version='0.4.2',
+    version='0.4.3',
     description='AWS S3 files manager',
-    long_description=open('docs/index.rst').read(),
+    #long_description=open('docs/index.rst').read(),
     author='Jeffrey Hu',
     author_email='zhiwehu@gmail.com',
     url='https://github.com/zhiwehu/s3filesmanager',
