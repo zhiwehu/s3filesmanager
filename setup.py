@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='s3filesmanager',
-    version='0.4',
+    version='0.4.1',
     description='AWS S3 files manager',
-    #long_description=open('https://github.com/zhiwehu/s3filesmanager/blob/master/docs/index.rst').read(),
+    long_description=open('docs/index.rst').read(),
     author='Jeffrey Hu',
     author_email='zhiwehu@gmail.com',
     url='https://github.com/zhiwehu/s3filesmanager',
@@ -13,7 +13,7 @@ setup(
                       'South >= 0.7.6',
                       'django-model-utils >= 1.1.0',
                       'django-bootstrap-toolkit',
-                      'PIL >= 1.1.7',
+                      'PIL == 1.1.7',
                       'sorl-thumbnail >= 11.12',
                       'boto >= 2.9.0',
                       'django-storages >= 1.1.8',
