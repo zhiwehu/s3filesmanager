@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .s3filesmanager.models import S3File
+from .models import S3File
 
 
 class S3FileAdmin(admin.ModelAdmin):

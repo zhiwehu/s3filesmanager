@@ -9,8 +9,8 @@ from django.utils import simplejson
 
 from sorl.thumbnail import get_thumbnail
 
-from .s3filesmanager.utils import get_page
-from .s3filesmanager.models import S3File
+from .utils import get_page
+from .models import S3File
 
 
 @login_required
