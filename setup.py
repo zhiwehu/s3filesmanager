@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='s3filesmanager',
-    version='0.4.9',
+    version='0.5.0',
     description='AWS S3 files manager',
     #long_description=open('docs/index.rst').read(),
     author='Jeffrey Hu',
@@ -19,7 +19,6 @@ setup(
                       'django-storages >= 1.1.8',
     ],
     packages=find_packages(),
-    include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
