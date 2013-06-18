@@ -1,0 +1,173 @@
+{% extends "s3filesmanager/base.html" %}
+
+{% load i18n bootstrap_toolkit %}
+
+{% block title %}{% trans "Files" %}{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>
+            {% trans "Files" %}
+            <small>{% trans "Total" %}: <span id="total_file_count">{{ paginator.count }}</span></small>
+        </h1>
+
+        <a id="add_files" class="btn btn-success">
+            <i class="icon-plus icon-white"></i>
+            {% trans "Add" %}
+        </a>
+
+        <div class="btn-group">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="icon-asterisk icon-white"></i>
+                {% trans "Actions" %}
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a id="select_all_files" href="#"><i class="icon-ok-circle"></i> {% trans "All" %}</a></li>
+                <li><a id="select_none_file" href="#"><i class="icon-ban-circle"></i> {% trans "None" %}</a></li>
+                <li><a id="delete_selected_files" href="#"><i class="icon-remove"></i> {% trans "Delete" %}</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="drop_files_div" class="well">{% trans "You can drop files to here!" %}</div>
+
+    <div id="file_upload_progress" class="progress progress-striped" style="display: none">
+        <div class="bar" style="width: 0%;"></div>
+    </div>
+
+    <form id="delete_files_form" method="POST" action="{% url "delete_files" %}">
+        {% csrf_token %}
+        <ul class="thumbnails" id="file_list">
+            {% for file in paginator.object_list %}
+                <li class="span3">
+                    <div class="thumbnail">
+                        <a href="{{ file.s3_file.url }}" data-toggle="tooltip" title="{{ file.file_name }}"
+                           target="_blank">
+                            {% if file.thumbnail_url %}
+                                <img src="{{ file.thumbnail_url }}">
+                            {% else %}
+                                <img src="{{ STATIC_URL }}img/80x80.png">
+                            {% endif %}
+                        </a>
+
+                        <div class="caption">
+                            <input name="file_id" type="checkbox" value="{{ file.id }}">
+
+                            <p><i class="icon-file"></i> {{ file.file_name }}</p>
+
+                            <p><i class="icon-info-sign"></i> {{ file.file_size|filesizeformat }}</p>
+
+                            <p><i class="icon-time"></i> {{ file.created|date:"Y-m-d H:i:s" }}</p>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if paginator.num_pages > 1 %}
+            <div class="pull-right">
+                    {% trans "Per page" %}: {{ paginator.per_page }}
+                    {% bootstrap_pagination paginator.object_list %}
+                </div>
+        {% endif %}
+    </form>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ STATIC_URL }}js/underscore.js"></script>
+    <script type="text/template" id="tpl_file">
+        <li class="span3">
+            <div class="thumbnail">
+                <a href="<%= s3_file_url %>" data-toggle="tooltip" title="<%= file_name %>" target="_blank">
+                    <img src="<%= thumbnail_url %>">
+                </a>
+
+                <div class="caption">
+                    <input name="file_id" type="checkbox" value="<%= file_id %>">
+
+                    <p><i class="icon-file"></i> <%= file_name %></p>
+
+                    <p><i class="icon-info-sign"></i> <%= file_size %></p>
+
+                    <p><i class="icon-time"></i> <%= created %></p>
+                </div>
+            </div>
+        </li>
+    </script>
+    <!-- load jquery.cookie.js for csrf_token upload -->
+    <script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
+    <!-- Load plupload and all it's runtimes -->
+    <script type="text/javascript" src="{{ STATIC_URL }}js/plupload/plupload.full.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var total_file_count = {{ paginator.count }};
+            var last_size = 0;
+
+            var uploader = new plupload.Uploader({
+                runtimes: "gears,html5,flash,silverlight,browserplus",
+                browse_button: "add_files",
+                drop_element: "drop_files_div",
+                max_file_size: "15mb",
+                url: "{% url "file_upload" %}",
+                flash_swf_url: "{{ STATIC_URL }}js/plupload/plupload.flash.swf",
+                silverlight_xap_url: "{{ STATIC_URL }}js/plupload/plupload.silverlight.xap",
+                filters: [
+                    {title: "Image files", extensions: "jpg,gif,png"}
+                ],
+                headers: {
+                    "ACCEPT": "application/json",
+                    "X-CSRFToken": $.cookie("csrftoken")
+                }
+            });
+
+            uploader.init();
+
+            uploader.bind("FilesAdded", function (up, files) {
+                up.start();
+                up.refresh(); // Reposition Flash/Silverlight
+                $("#file_upload_progress").show();
+            });
+
+            uploader.bind("Error", function (up, err) {
+                alert(err.message);
+                up.refresh(); // Reposition Flash/Silverlight
+            });
+
+            uploader.bind("FileUploaded", function (up, file, response) {
+                var p = (up.total.loaded - last_size) / (up.total.size - last_size) * 100;
+                $("#file_upload_progress").find("div.bar").attr("style", "width: " + p + "%;");
+                var obj = $.parseJSON(response.response);
+                var file_html = _.template($("#tpl_file").html(), obj);
+                $("#file_list").prepend(file_html);
+                total_file_count = total_file_count + 1;
+                $("#total_file_count").html(total_file_count);
+            });
+
+            uploader.bind("UploadComplete", function (up, file) {
+                last_size = up.total.size;
+                $("#file_upload_progress").hide();
+                $("#file_upload_progress").find("div.bar").attr("style", "width: 0%;");
+            });
+
+            $("#select_all_files").click(function () {
+                $("input[name=file_id]").attr("checked", true);
+            });
+
+            $("#select_none_file").click(function () {
+                $("input[name=file_id]").attr("checked", false);
+            });
+
+            $("#delete_selected_files").click(function () {
+                if (confirm("Are you sure to delete all selected files?")) {
+                    $("#delete_files_form").submit();
+                }
+            });
+
+            $(".thumbnail").tooltip({
+                selector: "a[data-toggle=tooltip]"
+            });
+
+        });
+    </script>
+{% endblock %}

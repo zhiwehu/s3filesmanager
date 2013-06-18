@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: s3filesmanager
+Version: 0.4.9
+Summary: AWS S3 files manager
+Home-page: https://github.com/zhiwehu/s3filesmanager
+Author: Jeffrey Hu
+Author-email: zhiwehu@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Framework :: Django

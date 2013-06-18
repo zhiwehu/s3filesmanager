@@ -1,0 +1,13 @@
+{% extends "s3filesmanager/base.html" %}
+
+{% load i18n s3filesmanager_tags %}
+
+{% block title %}{% trans "Files" %}{% endblock %}
+
+{% block content %}
+    {% s3filesmanager %}
+{% endblock %}
+
+{% block extra_js %}
+    {% s3filesmanager_js %}
+{% endblock %}

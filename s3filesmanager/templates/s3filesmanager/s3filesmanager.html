@@ -1,0 +1,74 @@
+{% load static i18n bootstrap_toolkit %}
+
+{% if paginator %}
+    <div class="page-header">
+        <h1>
+            {% trans "Files" %}
+            <small>{% trans "Total" %}: <span id="total_file_count">{{ paginator.count }}</span></small>
+        </h1>
+
+        <a id="add_files" class="btn btn-success">
+            <i class="icon-plus icon-white"></i>
+            {% trans "Add" %}
+        </a>
+
+        <div class="btn-group">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="icon-asterisk icon-white"></i>
+                {% trans "Actions" %}
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a id="select_all_files" href="#"><i class="icon-ok-circle"></i> {% trans "All" %}</a></li>
+                <li><a id="select_none_file" href="#"><i class="icon-ban-circle"></i> {% trans "None" %}</a></li>
+                <li><a id="delete_selected_files" href="#"><i class="icon-remove"></i> {% trans "Delete" %}</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="drop_files_div" class="well">{% trans "You can drop files to here!" %}</div>
+
+    <div id="file_upload_progress" class="progress progress-striped" style="display: none">
+        <div class="bar" style="width: 0%;"></div>
+    </div>
+
+    <form id="delete_files_form" method="POST" action="{% url "delete_files" %}">
+        {% csrf_token %}
+        <ul class="thumbnails" id="file_list">
+            {% for file in paginator.object_list %}
+                <li class="span3">
+                    <div class="thumbnail">
+                        <a href="{{ file.s3_file.url }}" data-toggle="tooltip" title="{{ file.file_name }}"
+                           target="_blank">
+                            {% if file.thumbnail_url %}
+                                <img src="{{ file.thumbnail_url }}">
+                            {% else %}
+                                <img src="{% get_static_prefix %}img/80x80.png">
+                            {% endif %}
+                        </a>
+
+                        <div class="caption">
+                            <input name="file_id" type="checkbox" value="{{ file.id }}">
+
+                            <p><i class="icon-file"></i> {{ file.file_name }}</p>
+
+                            <p><i class="icon-info-sign"></i> {{ file.file_size|filesizeformat }}</p>
+
+                            <p><i class="icon-time"></i> {{ file.created|date:"Y-m-d H:i:s" }}</p>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if paginator.num_pages > 1 %}
+            <div class="pull-right">
+                {% trans "Per page" %}: {{ paginator.per_page }}
+                {% bootstrap_pagination paginator.object_list %}
+            </div>
+        {% endif %}
+    </form>
+
+    <script type="text/javascript">
+    var TOTAL_FILE_COUNT = {{ paginator.count }};
+    </script>
+{% endif %}
