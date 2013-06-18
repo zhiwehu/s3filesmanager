@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='s3filesmanager',
-    version='0.5.0',
+    version='0.5.1',
     description='AWS S3 files manager',
     #long_description=open('docs/index.rst').read(),
     author='Jeffrey Hu',
