@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='s3filesmanager',
-    version='0.4.7',
+    version='0.4.8',
     description='AWS S3 files manager',
     #long_description=open('docs/index.rst').read(),
     author='Jeffrey Hu',
@@ -22,9 +22,7 @@ setup(
     package_data={
         's3filesmanager': [
             'static/*',
-            'templates/*.html',
-            'templates/*/*.html',
-            #'locale/*/LC_MESSAGES/*',
+            'templates/*',
         ],
     },
     classifiers=[
